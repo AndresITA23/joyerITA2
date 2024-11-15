@@ -15,6 +15,15 @@ import Catalogo from "./src/screens/Catalogo";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home Tab" component={HomeScreen} />
+      <Stack.Screen name="Catálogo" component={Catalogo} />
+    </Stack.Navigator>
+  );
+}
+
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -30,8 +39,6 @@ function MainTabs() {
             iconName = focused ? 'reorder-three' : 'reorder-three-outline';
           } else if (route.name === 'Mi Cuenta') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
-          } else if (route.name === 'Catálogo') {
-            iconName = focused ? 'book' : 'book-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -40,10 +47,9 @@ function MainTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Carrito" component={Carrito} />
       <Tab.Screen name="Categorías" component={Category} />
-      <Tab.Screen name="Catálogo" component={Catalogo} />
       <Tab.Screen name="Mi Cuenta" component={MyAccountStack} />
     </Tab.Navigator>
   );
