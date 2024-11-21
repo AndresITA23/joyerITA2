@@ -28,12 +28,12 @@ function HomeScreen({ navigation }) {
       <View style={styles.categoryContainer}>
         {data.map((item) => (
           <View key={item.id} style={[styles.categoryItem, styles.categoryBorder]}>
-            <View style={styles.categoryTextContainer}>
+            <TouchableOpacity style={styles.categoryTextContainer} onPress={() => navigation.navigate('Category')}>
               <Text style={styles.categoryText}>{item.title}</Text>
               <Text style={styles.categorySubtitle}>Personaliza el tuyo</Text>
-            </View>
+            </TouchableOpacity>
             <Image source={item.image} style={styles.categoryImage} />
-          </View>
+          </View> 
         ))}
       </View>
       <TouchableOpacity style={styles.catalogButton} onPress={() => navigation.navigate('Catálogo')}>

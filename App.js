@@ -7,10 +7,10 @@ import HomeScreen from "./src/screens/HomeScreen";
 import LoginPage from "./src/screens/LoginPage";
 import RegisterPage from "./src/screens/RegisterPage";
 import Carrito from "./src/screens/Carrito";
-import Category from "./src/screens/Category";
 import MyAccount from "./src/screens/MyAccount";
 import EditMyAccount from "./src/screens/EditMyAccount";
 import Catalogo from "./src/screens/Catalogo";
+import Categories from "./src/screens/Category";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -20,23 +20,22 @@ function HomeStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home Tab" component={HomeScreen} />
       <Stack.Screen name="Catálogo" component={Catalogo} />
+      <Stack.Screen name="Category" component={Categories} />
     </Stack.Navigator>
   );
 }
 
 function MainTabs() {
   return (
-    <Tab.Navigator
+    <Tab.Navigator initialRouteName="Categorías"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
+          if (route.name === 'Categorías') {
+            iconName = focused ? 'reorder-three' : 'reorder-three-outline';
           } else if (route.name === 'Carrito') {
             iconName = focused ? 'cart' : 'cart-outline';
-          } else if (route.name === 'Categorías') {
-            iconName = focused ? 'reorder-three' : 'reorder-three-outline';
           } else if (route.name === 'Mi Cuenta') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
           }
@@ -47,9 +46,8 @@ function MainTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Carrito" component={Carrito} />
-      <Tab.Screen name="Categorías" component={Category} />
+      <Tab.Screen name="Categorías" component={HomeStack} />
       <Tab.Screen name="Mi Cuenta" component={MyAccountStack} />
     </Tab.Navigator>
   );
