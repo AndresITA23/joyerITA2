@@ -25,10 +25,13 @@ function LoginPage({ onSignIn, onRegister }) {
       <TouchableOpacity style={styles.buttonGoogle}>
         <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
       </TouchableOpacity>
-      
-      <Text style={styles.register}>
+    
+      <Text style={styles.registerText}>
         ¿Aún no tienes cuenta? 
-        <Text style={styles.registerLink} onPress={onRegister}> Regístrate Aquí.</Text>
+        <TouchableOpacity onPress={onRegister}>
+          <Text style={styles.linkText}> Registrate aquí</Text>
+        </TouchableOpacity>
+        .
       </Text>
     </View>
   );
@@ -52,6 +55,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     marginTop: 50,
     marginBottom: 100,
+    marginBottom: 40,
   },
   inputContainer: {
     width: '80%',
@@ -90,6 +94,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFF',
   },
+  registerText: {
+    fontSize: 16,
+    color: '#000',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  linkText: {
+    color: '#007BFF', // Color azul estilo enlace
+    fontWeight: 'bold',
+    textDecorationLine: 'underline', // Sin subrayado
+    textAling: 'center',
+  },
   register: {
     fontFamily: 'Roboto',
     fontSize: 15,
@@ -103,7 +119,7 @@ const styles = StyleSheet.create({
   circle: {
     position: 'absolute',
     width: 550,
-    height: 590,
+    height: 470,
     bottom: 0,
     backgroundColor: '#D2AC8F',
     borderTopLeftRadius: 250,

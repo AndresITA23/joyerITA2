@@ -55,14 +55,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 15,
   },
   registerText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000000',
-    marginTop: 70,
-    marginBottom: 60,
+    marginTop: 0,
+    marginBottom: 30,
   },
   inputContainer: {
     width: '80%',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   inputUnderline: {
-    height: 44,
+    height: 40,
     borderBottomWidth: 1,
     borderBottomColor: '#525252',
   },
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     width: 150,
     alignItems: 'center',
     padding: 10,
-    marginTop: 20,
+    marginTop: 15,
   },
   buttonGoogle: {
     backgroundColor: '#DD6B17',
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     width: 218,
     alignItems: 'center',
     padding: 10,
-    marginTop: 20,
+    marginTop: 15,
   },
   buttonText: {
     fontFamily: 'Roboto',
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     width: 150,
     alignItems: 'center',
     padding: 10,
-    marginTop: 20,
+    marginTop: 15,
   },
   register: {
     fontFamily: 'Roboto',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   circle: {
     position: 'absolute',
     width: 550,
-    height: 590,
+    height: 480,
     bottom: 0,
     backgroundColor: '#D2AC8F',
     borderTopLeftRadius: 250,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList } from 'react-native';
+import Swiper from 'react-native-swiper';
 
 const data = [
   { id: '1', title: 'Collares', image: require('../../assets/images/collar_1.png') },
@@ -7,24 +8,36 @@ const data = [
   { id: '3', title: 'Straps', image: require('../../assets/images/strap_1.png') },
 ];
 
+const imageData = [
+  { id: '1', title: 'Collar Abejitas', image: require('../../assets/images/collar_abejitas.png') },
+  { id: '2', title: 'Collar Caritas felices', image: require('../../assets/images/collar_caras_felices.png') },
+  { id: '3', title: 'Collar cerezas', image: require('../../assets/images/collar_cerezas.png') },
+  { id: '4', title: 'Collar flores blancas', image: require('../../assets/images/collar_flores_blancas.png') },
+  { id: '5', title: 'Collar flores moradas', image: require('../../assets/images/collar_flores_moradas.png') },
+  { id: '6', title: 'Pulsera moras', image: require('../../assets/images/pulsera_moras.png') },
+  { id: '7', title: 'Pulseras tejidas', image: require('../../assets/images/pulseras_tejidas.png') },
+  { id: '8', title: 'Pulseras nombre', image: require('../../assets/images/pulseras_nombre.png') },
+  { id: '9', title: 'Strap', image: require('../../assets/images/strap.png') },
+];
+
 function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       <TextInput style={styles.searchBar} placeholder="ejemplo: collares" />
-      <Text style={styles.sectionTitle}>Mira nuestros productos</Text>
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <View style={styles.carouselItem}>
+      <Swiper
+        style={styles.carouselContainer}
+        showsPagination // Muestra paginación (opcional)
+        autoplay={true} // Habilita autoplay (opcional)
+        autoplayTimeout={3000} // Intervalo de autoplay (opcional)
+        loop={true} // Repetición infinita (opcional)
+      >
+        {imageData.map((item) => (
+          <View key={item.id} style={styles.carouselItem}>
             <Image source={item.image} style={styles.carouselImage} />
           </View>
-        )}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.carouselContainer}
-      />
+        ))}
+      </Swiper>
       <View style={styles.categoryContainer}>
         {data.map((item) => (
           <View key={item.id} style={[styles.categoryItem, styles.categoryBorder]}>
@@ -41,7 +54,8 @@ function HomeScreen({ navigation }) {
       </TouchableOpacity>
     </View>
   );
-}
+};
+
 
 const styles = StyleSheet.create({
   container: {
@@ -55,6 +69,11 @@ const styles = StyleSheet.create({
     height: 150,
     marginTop: 30,
     marginBottom: 10,
+  },
+  logo: {
+    width: 184,
+    height: 190,
+    marginTop: 0,
   },
   searchBar: {
     height: 40,
@@ -77,24 +96,28 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
   },
   carouselContainer: {
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingLeft: 3,
+    paddingRight: 6,
+    height: 400,
   },
   carouselItem: {
-    backgroundColor: '#D2AC8F',
-    borderRadius: 15,
-    height: 170,
-    padding: 5,
-    marginLeft: 1,
-    marginRight: 9,
+    flex: 1, // Takes up full available height
     justifyContent: 'center',
     alignItems: 'center',
   },
   carouselImage: {
-    width: 200,
-    height: 160,
-    borderRadius: 15,
-  },
+  width: '90%',
+  height: '90%',
+  resizeMode: 'contain', // Ajusta la imagen al tamaño del contenedor
+  borderRadius: 15,
+},
+carouselImage: {
+  width: '90%', // Asegura que ocupe todo el ancho disponible del contenedor
+  height: 300,   // Altura fija para mantener consistencia visual
+  resizeMode: 'contain', // Muestra la imagen completa con bordes si es necesario
+  borderRadius: 15,
+  backgroundColor: '#fff', // Fondo blanco opcional para imágenes más pequeñas
+},
   categoryContainer: {
     width: '90%',
     marginTop: 20,
@@ -146,3 +169,4 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
