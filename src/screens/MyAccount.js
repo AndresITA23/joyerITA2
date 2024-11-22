@@ -1,7 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-function MyAccount({ navigation }) {
+function MyAccount({ navigation, onSignOut }) {
+  const handleSignOut = () => {
+    onSignOut();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Iniciar sesión' }],
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -19,7 +27,7 @@ function MyAccount({ navigation }) {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Editar Mi Cuenta')}>
           <Text style={styles.buttonText}>Editar información</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
           <Text style={styles.buttonText}>Cerrar sesión</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>

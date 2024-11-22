@@ -25,7 +25,19 @@ function HomeStack() {
   );
 }
 
-function MainTabs() {
+function MyAccountStack({ onSignOut }) {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Mi Cuenta Tab">
+        {props => <MyAccount {...props} onSignOut={onSignOut} />}
+      </Stack.Screen>
+      <Stack.Screen name="Editar Mi Cuenta" component={EditMyAccount} />
+      <Stack.Screen name="Iniciar sesión" component={LoginPage} />
+    </Stack.Navigator>
+  );
+}
+
+function MainTabs({ onSignOut }) {
   return (
     <Tab.Navigator initialRouteName="Categorías"
       screenOptions={({ route }) => ({
@@ -48,17 +60,10 @@ function MainTabs() {
     >
       <Tab.Screen name="Carrito" component={Carrito} />
       <Tab.Screen name="Categorías" component={HomeStack} />
-      <Tab.Screen name="Mi Cuenta" component={MyAccountStack} />
+      <Tab.Screen name="Mi Cuenta">
+        {props => <MyAccountStack {...props} onSignOut={onSignOut} />}
+      </Tab.Screen>
     </Tab.Navigator>
-  );
-}
-
-function MyAccountStack() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Mi Cuenta Tab" component={MyAccount} />
-      <Stack.Screen name="Editar Mi Cuenta" component={EditMyAccount} />
-    </Stack.Navigator>
   );
 }
 
@@ -68,6 +73,10 @@ function App() {
 
   const handleSignIn = () => {
     setIsSignedIn(true);
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
   };
 
   const handleRegisterNavigation = () => {
@@ -81,7 +90,7 @@ function App() {
   return (
     <NavigationContainer>
       {isSignedIn ? (
-        <MainTabs />
+        <MainTabs onSignOut={handleSignOut} />
       ) : (
         isRegistering ? (
           <RegisterPage onRegister={handleRegistrationComplete} onBack={handleRegistrationComplete} />
