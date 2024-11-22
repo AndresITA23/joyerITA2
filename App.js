@@ -10,7 +10,8 @@ import Carrito from "./src/screens/Carrito";
 import MyAccount from "./src/screens/MyAccount";
 import EditMyAccount from "./src/screens/EditMyAccount";
 import Catalogo from "./src/screens/Catalogo";
-import Categories from "./src/screens/Category";
+import Category from "./src/screens/Products";
+import ProductCard from "./src/components/ProductCard"
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -20,7 +21,8 @@ function HomeStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home Tab" component={HomeScreen} />
       <Stack.Screen name="Catálogo" component={Catalogo} />
-      <Stack.Screen name="Category" component={Categories} />
+      <Stack.Screen name="Category" component={Category} />
+      <Stack.Screen name="ProductCard" component={ProductCard} />
     </Stack.Navigator>
   );
 }

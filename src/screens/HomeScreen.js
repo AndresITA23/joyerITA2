@@ -27,10 +27,10 @@ function HomeScreen({ navigation }) {
       <TextInput style={styles.searchBar} placeholder="ejemplo: collares" />
       <Swiper
         style={styles.carouselContainer}
-        showsPagination // Muestra paginación (opcional)
-        autoplay={true} // Habilita autoplay (opcional)
-        autoplayTimeout={3000} // Intervalo de autoplay (opcional)
-        loop={true} // Repetición infinita (opcional)
+        showsPagination
+        autoplay={true} 
+        autoplayTimeout={3000} 
+        loop={true}
       >
         {imageData.map((item) => (
           <View key={item.id} style={styles.carouselItem}>
@@ -41,7 +41,10 @@ function HomeScreen({ navigation }) {
       <View style={styles.categoryContainer}>
         {data.map((item) => (
           <View key={item.id} style={[styles.categoryItem, styles.categoryBorder]}>
-            <TouchableOpacity style={styles.categoryTextContainer} onPress={() => navigation.navigate('Category')}>
+            <TouchableOpacity 
+              style={styles.categoryTextContainer} 
+              onPress={() => navigation.navigate('Category', { categoryTitle: item.title })}
+            >
               <Text style={styles.categoryText}>{item.title}</Text>
               <Text style={styles.categorySubtitle}>Personaliza el tuyo</Text>
             </TouchableOpacity>
@@ -101,20 +104,20 @@ const styles = StyleSheet.create({
     height: 400,
   },
   carouselItem: {
-    flex: 1, // Takes up full available height
+    flex: 1, 
     justifyContent: 'center',
     alignItems: 'center',
   },
   carouselImage: {
   width: '90%',
   height: '90%',
-  resizeMode: 'contain', // Ajusta la imagen al tamaño del contenedor
+  resizeMode: 'contain', 
   borderRadius: 15,
 },
 carouselImage: {
-  width: '90%', // Asegura que ocupe todo el ancho disponible del contenedor
-  height: 300,   // Altura fija para mantener consistencia visual
-  resizeMode: 'contain', // Muestra la imagen completa con bordes si es necesario
+  width: '90%', 
+  height: 300,   
+  resizeMode: 'contain',
   borderRadius: 15,
   backgroundColor: '#fff', // Fondo blanco opcional para imágenes más pequeñas
 },
