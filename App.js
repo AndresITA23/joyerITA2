@@ -11,7 +11,10 @@ import MyAccount from "./src/screens/MyAccount";
 import EditMyAccount from "./src/screens/EditMyAccount";
 import Catalogo from "./src/screens/Catalogo";
 import Category from "./src/screens/Products";
-import ProductCard from "./src/components/ProductCard"
+import ProductCard from "./src/components/ProductCard";
+import NecklaceCustomization from "./src/components/NecklaceCustomization";
+import BraceletCustomization from "./src/components/BraceletCustomization";
+import StrapCustomization from "./src/components/StrapCustomization";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -23,6 +26,8 @@ function HomeStack() {
       <Stack.Screen name="Catálogo" component={Catalogo} />
       <Stack.Screen name="Category" component={Category} />
       <Stack.Screen name="ProductCard" component={ProductCard} />
+      <Stack.Screen name="NecklaceCustomization" component={NecklaceCustomization} />
+      
     </Stack.Navigator>
   );
 }

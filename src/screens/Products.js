@@ -3,16 +3,16 @@ import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity } 
 
 const productsByCategory = {
   Collares: [
-    { id: '1', name: 'Collar Abejitas', price: 199.99, description: 'Hermoso collar con abejitas de colores.', image: require('../../assets/images/collar_abejitas.png') },
-    { id: '2', name: 'Collar Caritas Felices', price: 149.99, description: 'Un collar lleno de caritas felices.', image: require('../../assets/images/collar_caras_felices.png') },
-    { id: '3', name: 'Collar Cerezas', price: 129.99, description: 'Collar con colgantes de cerezas.', image: require('../../assets/images/collar_cerezas.png') },
+    { id: '1', name: 'Collar Abejitas', price: 199.99, description: 'Hermoso collar con abejitas de colores.', image: require('../../assets/images/collar_abejitas.png'), type: 'necklace' },
+    { id: '2', name: 'Collar Caritas Felices', price: 149.99, description: 'Un collar lleno de caritas felices.', image: require('../../assets/images/collar_caras_felices.png'), type: 'necklace' },
+    { id: '3', name: 'Collar Cerezas', price: 129.99, description: 'Collar con colgantes de cerezas.', image: require('../../assets/images/collar_cerezas.png'), type: 'necklace' },
   ],
   Pulseras: [
-    { id: '4', name: 'Pulsera Moras', price: 99.99, description: 'Pulsera inspirada en las moras.', image: require('../../assets/images/pulsera_moras.png') },
-    { id: '5', name: 'Pulseras Tejidas', price: 89.99, description: 'Pulseras tejidas a mano.', image: require('../../assets/images/pulseras_tejidas.png') },
+    { id: '4', name: 'Pulsera Moras', price: 99.99, description: 'Pulsera inspirada en las moras.', image: require('../../assets/images/pulsera_moras.png'), type: 'bracelet' },
+    { id: '5', name: 'Pulseras Tejidas', price: 89.99, description: 'Pulseras tejidas a mano.', image: require('../../assets/images/pulseras_tejidas.png'), type: 'bracelet' },
   ],
   Straps: [
-    { id: '6', name: 'Strap Multicolor', price: 59.99, description: 'Strap colorido para tu dispositivo.', image: require('../../assets/images/strap.png') },
+    { id: '6', name: 'Strap Multicolor', price: 59.99, description: 'Strap colorido para tu dispositivo.', image: require('../../assets/images/strap.png'), type: 'strap' },
   ],
 };
 

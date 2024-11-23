@@ -1,8 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 function ProductCard({ route }) {
-  const { product, categoryTitle } = route.params; // Obtener datos del producto y la categoría
+  const navigation = useNavigation(); 
+  const { product, categoryTitle } = route.params; 
+
+  const handleCustomize = () => {
+    switch (product.type) { 
+      case 'necklace':
+        navigation.navigate('NecklaceCustomization');
+        break;
+      case 'bracelet':
+        navigation.navigate('BraceletCustomization');
+        break;
+      case 'strap':
+        navigation.navigate('StrapCustomization');
+        break;
+      default:
+        console.warn('Tipo de producto no reconocido');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -19,8 +37,8 @@ function ProductCard({ route }) {
       <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
       <Text style={styles.productDescription}>{product.description}</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.personalizeButton}>
-            <Text style={styles.personalizeButtonText}>Personalizar</Text>
+        <TouchableOpacity style={styles.customizeButton} onPress={handleCustomize}>
+          <Text style={styles.customizeButtonText}>Personalizar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addToCartButton}>
             <Text style={styles.addToCartButtonText}>Agregar al carrito</Text>
@@ -75,7 +93,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  personalizeButton: {
+  customizeButton: {
     backgroundColor: '#DD6B17',
     borderRadius: 25,
     padding: 10,
@@ -85,7 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  personalizeButtonText: {
+  customizeButtonText: {
     fontSize: 15,
     color: 'white',
     fontWeight: 'bold',
