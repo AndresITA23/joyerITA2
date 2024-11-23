@@ -15,6 +15,8 @@ import ProductCard from "./src/components/ProductCard";
 import NecklaceCustomization from "./src/components/NecklaceCustomization";
 import BraceletCustomization from "./src/components/BraceletCustomization";
 import StrapCustomization from "./src/components/StrapCustomization";
+import StrapCustomizationTheme from "./src/components/StrapCustomizationTheme";
+import StrapCustomizationRandom from "./src/components/StrapCustomizationRandom";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,7 +29,9 @@ function HomeStack() {
       <Stack.Screen name="Category" component={Category} />
       <Stack.Screen name="ProductCard" component={ProductCard} />
       <Stack.Screen name="NecklaceCustomization" component={NecklaceCustomization} />
-      
+      <Stack.Screen name="StrapCustomization" component={StrapCustomization} />
+      <Stack.Screen name="StrapCustomizationTheme" component={StrapCustomizationTheme} />
+      <Stack.Screen name="StrapCustomizationRandom" component={StrapCustomizationRandom} />
     </Stack.Navigator>
   );
 }

@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 function NecklaceCustomization() {
   const navigation = useNavigation();
 
-  // Estados para almacenar las selecciones
   const [baseColor, setBaseColor] = useState(null);
   const [size, setSize] = useState(null);
   const [objectColor, setObjectColor] = useState(null);
@@ -51,7 +50,6 @@ function NecklaceCustomization() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Logo */}
       <View style={styles.header}>
         <Image
           source={require('../../assets/images/logo-removebg.png')}
@@ -60,31 +58,26 @@ function NecklaceCustomization() {
         <Text style={styles.categoryTitle}>Personalizar Collar</Text>
       </View>
 
-      {/* Sección 1: Color de chaquira base */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>1. Seleccionar color de chaquira base</Text>
         {renderRadioButtons(colors, baseColor, setBaseColor)}
       </View>
 
-      {/* Sección 2: Tamaño */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>2. Seleccionar tamaño</Text>
         {renderRadioButtons(sizes, size, setSize)}
       </View>
 
-      {/* Sección 3: Color del objeto del collar */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>3. Seleccionar color del objeto del collar</Text>
         {renderRadioButtons(colors, objectColor, setObjectColor)}
       </View>
 
-      {/* Sección 4: Color del broche */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>4. Seleccionar color del broche</Text>
         {renderRadioButtons(claspColors, claspColor, setClaspColor)}
       </View>
 
-      {/* Botón Terminar */}
       <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>
         <Text style={styles.finishButtonText}>Terminar</Text>
       </TouchableOpacity>
