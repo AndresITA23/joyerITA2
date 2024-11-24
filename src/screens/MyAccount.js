@@ -30,7 +30,7 @@ function MyAccount({ navigation, onSignOut }) {
         <TouchableOpacity style={styles.button} onPress={handleSignOut}>
           <Text style={styles.buttonText}>Cerrar sesión</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Términos y Condiciones')}>
           <Text style={styles.buttonText}>Términos y condiciones</Text>
         </TouchableOpacity>
       </View>

@@ -9,6 +9,7 @@ import RegisterPage from "./src/screens/RegisterPage";
 import Carrito from "./src/screens/Carrito";
 import MyAccount from "./src/screens/MyAccount";
 import EditMyAccount from "./src/screens/EditMyAccount";
+import TermsAndConditions from "./src/screens/TermsAndConditions";
 import Catalogo from "./src/screens/Catalogo";
 import Category from "./src/screens/Products";
 import ProductCard from "./src/components/ProductCard";
@@ -43,6 +44,7 @@ function MyAccountStack({ onSignOut }) {
         {props => <MyAccount {...props} onSignOut={onSignOut} />}
       </Stack.Screen>
       <Stack.Screen name="Editar Mi Cuenta" component={EditMyAccount} />
+      <Stack.Screen name="Términos y Condiciones" component={TermsAndConditions} />
       <Stack.Screen name="Iniciar sesión" component={LoginPage} />
     </Stack.Navigator>
   );
