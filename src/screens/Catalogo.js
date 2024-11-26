@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+
+
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -10,17 +13,30 @@ const data = [
   { id: '4', title: 'Collar de corazón', price: '$140.00', description: 'Collar con un colgante en forma de corazón.', image: require('../../assets/images/collar_1.png') },
   { id: '5', title: 'Collar de flores blancas', price: '$120.00', description: 'Un hermoso collar con diseño de flores.', image: require('../../assets/images/collar_flores_blancas.png') },
   { id: '6', title: 'Pulsera moras', price: '$80.00', description: 'Pulsera con pequeños flores colgantes.', image: require('../../assets/images/pulsera_moras.png') },
+  { id: '7', title: 'Strap de corazones', price: '$50.00', description: 'Strap de corazones para tu teléfono móvil.', image: require('../../assets/images/strap_corazones.png') },
+  { id: '8', title: 'Collar de flores moradas', price: '$140.00', description: 'Collar con un colgante en forma de flores.', image: require('../../assets/images/collar_flores_moradas.png') },
+  { id: '9', title: 'Collar de abejitass', price: '$120.00', description: 'Un hermoso collar con diseño de flores.', image: require('../../assets/images/collar_abejitas.png') },
+  { id: '10', title: 'Pulseras corazon', price: '$80.00', description: 'Pulsera con pequeño corazon.', image: require('../../assets/images/pulseras_corazon.png') },
+  { id: '11', title: 'Collar de caras felices', price: '$140.00', description: 'Collar con un colgante con caritas.', image: require('../../assets/images/collar_caras_felices.png') },
+  { id: '12', title: 'Collar de cerezas', price: '$120.00', description: 'Un hermoso collar con un diseño de una cerezas.', image: require('../../assets/images/collar_cereza.png') },
+  { id: '13', title: 'Pulseras corazon rojo', price: '$80.00', description: 'Pulsera con pequeño corazon en color rojo.', image: require('../../assets/images/pulseras_corazon_rojo.png') },
+  { id: '14', title: 'Pulseras nombres', price: '$80.00', description: 'Pulsera con nombres grabados.', image: require('../../assets/images/pulseras_nombre.png') },
+  { id: '15', title: 'Pulseras tejidas', price: '$80.00', description: 'Pulsera tejidas de manera artesanal', image: require('../../assets/images/pulseras_tejidas.png') },
+  { id: '16', title: 'Strap de carita feliz', price: '$50.00', description: 'Strap de carita feliz para tu teléfono móvil.', image: require('../../assets/images/strap.png') },
+  { id: '17', title: 'Strap de ojo turco', price: '$50.00', description: 'Strap de ojo turco para tu teléfono móvil.', image: require('../../assets/images/strap_ojo_turco.png') },
+
 ];
 
-function Catalogo({ navigation }) {
-  const [searchQuery, setSearchQuery] = useState(''); // Estado para la búsqueda
-  const [filteredData, setFilteredData] = useState(data); // Estado para los datos filtrados
 
-  // Función para manejar la búsqueda
+
+function Catalogo({ addToCart }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState(data);
+
   const handleSearch = (text) => {
     setSearchQuery(text);
     if (text === '') {
-      setFilteredData(data); // Si no hay texto, muestra todos los productos
+      setFilteredData(data);
     } else {
       const filtered = data.filter((item) =>
         item.title.toLowerCase().includes(text.toLowerCase())
@@ -31,15 +47,18 @@ function Catalogo({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
+      <Image
+        source={require('../../assets/images/logo-removebg.png')}
+        style={styles.logo}
+      />
       <TextInput
         style={styles.searchBar}
         placeholder="Buscar productos..."
-        value={searchQuery} // Vinculamos el estado al campo de texto
-        onChangeText={handleSearch} // Actualizamos el estado al escribir
+        value={searchQuery}
+        onChangeText={handleSearch}
       />
       <FlatList
-        data={filteredData} // Usamos los datos filtrados
+        data={filteredData}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
             <Image source={item.image} style={styles.itemImage} />
@@ -49,7 +68,10 @@ function Catalogo({ navigation }) {
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Personalizar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => addToCart(item)} 
+            >
               <Text style={styles.buttonText}>Agregar al carrito</Text>
             </TouchableOpacity>
           </View>
