@@ -1,20 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 const data = [
-  { id: '1', title: 'Collar de cerezas', price: '$120.00', description: 'Un hermoso collar con diseño de cerezas.', image: require('../../assets/images/collar_cereza.png') },
+  { id: '1', title: 'Collar de cerezas', price: '$120.00', description: 'Un hermoso collar con diseño de cerezas.', image: require('../../assets/images/collar_cerezas.png') },
   { id: '2', title: 'Pulsera de corazones', price: '$80.00', description: 'Pulsera con pequeños corazones colgantes.', image: require('../../assets/images/pulsera_1.png') },
   { id: '3', title: 'Strap de corazón', price: '$50.00', description: 'Strap de corazón para tu teléfono móvil.', image: require('../../assets/images/strap_1.png') },
   { id: '4', title: 'Collar de corazón', price: '$140.00', description: 'Collar con un colgante en forma de corazón.', image: require('../../assets/images/collar_1.png') },
+  { id: '5', title: 'Collar de flores blancas', price: '$120.00', description: 'Un hermoso collar con diseño de flores.', image: require('../../assets/images/collar_flores_blancas.png') },
+  { id: '6', title: 'Pulsera moras', price: '$80.00', description: 'Pulsera con pequeños flores colgantes.', image: require('../../assets/images/pulsera_moras.png') },
 ];
 
 function Catalogo({ navigation }) {
+  const [searchQuery, setSearchQuery] = useState(''); // Estado para la búsqueda
+  const [filteredData, setFilteredData] = useState(data); // Estado para los datos filtrados
+
+  // Función para manejar la búsqueda
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    if (text === '') {
+      setFilteredData(data); // Si no hay texto, muestra todos los productos
+    } else {
+      const filtered = data.filter((item) =>
+        item.title.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredData(filtered);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
-      <TextInput style={styles.searchBar} placeholder="Buscar productos..." />
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Buscar productos..."
+        value={searchQuery} // Vinculamos el estado al campo de texto
+        onChangeText={handleSearch} // Actualizamos el estado al escribir
+      />
       <FlatList
-        data={data}
+        data={filteredData} // Usamos los datos filtrados
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
             <Image source={item.image} style={styles.itemImage} />
@@ -30,7 +55,6 @@ function Catalogo({ navigation }) {
           </View>
         )}
         keyExtractor={(item) => item.id}
-        numColumns={2}
         contentContainerStyle={styles.listContainer}
       />
     </View>
@@ -41,36 +65,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5DC',
-    alignItems: 'center',
     paddingHorizontal: 10,
   },
   logo: {
-    width: 150,
-    height: 150,
-    marginTop: 30,
-    marginBottom: 10,
+    width: width * 0.9,
+    height: height * 0.3,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginVertical: 20,
   },
   searchBar: {
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 25,
     paddingLeft: 20,
-    paddingRight: 20,
     width: '90%',
+    marginTop: 20,
     marginBottom: 20,
-    backgroundColor: 'white',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    alignSelf: 'center',
   },
   listContainer: {
-    alignItems: 'center',
+    paddingBottom: 20,
   },
   itemContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 10,
-    margin: 10,
+    marginVertical: 10,
     alignItems: 'center',
-    width: '45%',
+    width: '100%',
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
