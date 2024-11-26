@@ -3,7 +3,7 @@
     "name": "demo2",
     "slug": "demo2",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,

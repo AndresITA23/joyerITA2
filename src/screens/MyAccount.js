@@ -1,7 +1,21 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 
 function MyAccount({ navigation, onSignOut }) {
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    const updateOrientation = () => {
+      const { width, height } = Dimensions.get('window');
+      setIsLandscape(width > height);
+    };
+
+    const subscription = Dimensions.addEventListener('change', updateOrientation);
+    return () => {
+      subscription?.remove();
+    };
+  }, []);
+
   const handleSignOut = () => {
     onSignOut();
     navigation.reset({
@@ -16,23 +30,25 @@ function MyAccount({ navigation, onSignOut }) {
         <Text style={styles.headerText}>Mi Cuenta</Text>
         <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       </View>
-      <View style={styles.content}>
+      <View style={isLandscape ? styles.contentLandscape : styles.content}>
         <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
-        <View style={styles.profileContainer}>
+        <View style={isLandscape ? styles.profileContainerLandscape : styles.profileContainer}>
           <Text style={styles.label}>NOMBRE:</Text>
           <Text style={styles.name}>VICTOR EDUARDO JUAREZ</Text>
           <Text style={styles.label}>DOMICILIO:</Text>
           <Text style={styles.address}>CALLE EDUARDO SI HAY #762, FARCC. SOVERANA CONVENCIÓN, AGUASCALIENTES, AGUASCALIENTES CP. 20126</Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Editar Mi Cuenta')}>
-          <Text style={styles.buttonText}>Editar información</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-          <Text style={styles.buttonText}>Cerrar sesión</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Términos y condiciones</Text>
-        </TouchableOpacity>
+        <View style={isLandscape ? styles.buttonContainerLandscape : styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Editar Mi Cuenta')}>
+            <Text style={styles.buttonText}>Editar información</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+            <Text style={styles.buttonText}>Cerrar sesión</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Términos y Condiciones')}>
+            <Text style={styles.buttonText}>Términos y condiciones</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -66,6 +82,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
   },
+  contentLandscape: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingTop: 0,
+  },
   profileImage: {
     width: 150,
     height: 150,
@@ -80,24 +103,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 5,
-    textAlign: 'left',
+  profileContainerLandscape: {
+    width: '40%',
+    backgroundColor: '#D2AC8F',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
   },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 10,
-    textAlign: 'left',
+  buttonContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
-  address: {
-    fontSize: 16,
-    color: '#000000',
-    textAlign: 'left',
+  buttonContainerLandscape: {
+    width: '30%',
+    alignItems: 'center',
+    marginBottom: 40,
   },
   button: {
     backgroundColor: '#DD6B17',
