@@ -22,67 +22,11 @@ import StrapCustomizationRandom from "./src/components/StrapCustomizationRandom"
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function HomeStack() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home Tab" component={HomeScreen} />
-      <Stack.Screen name="Catálogo" component={Catalogo} />
-      <Stack.Screen name="Category" component={Category} />
-      <Stack.Screen name="ProductCard" component={ProductCard} />
-      <Stack.Screen name="NecklaceCustomization" component={NecklaceCustomization} />
-      <Stack.Screen name="StrapCustomization" component={StrapCustomization} />
-      <Stack.Screen name="StrapCustomizationTheme" component={StrapCustomizationTheme} />
-      <Stack.Screen name="StrapCustomizationRandom" component={StrapCustomizationRandom} />
-    </Stack.Navigator>
-  );
-}
-
-function MyAccountStack({ onSignOut }) {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Mi Cuenta Tab">
-        {props => <MyAccount {...props} onSignOut={onSignOut} />}
-      </Stack.Screen>
-      <Stack.Screen name="Editar Mi Cuenta" component={EditMyAccount} />
-      <Stack.Screen name="Términos y Condiciones" component={TermsAndConditions} />
-      <Stack.Screen name="Iniciar sesión" component={LoginPage} />
-    </Stack.Navigator>
-  );
-}
-
-function MainTabs({ onSignOut }) {
-  return (
-    <Tab.Navigator initialRouteName="Categorías"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Categorías') {
-            iconName = focused ? 'reorder-three' : 'reorder-three-outline';
-          } else if (route.name === 'Carrito') {
-            iconName = focused ? 'cart' : 'cart-outline';
-          } else if (route.name === 'Mi Cuenta') {
-            iconName = focused ? 'person-circle' : 'person-circle-outline';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
-        headerShown: false,
-      })}
-    >
-      <Tab.Screen name="Carrito" component={Carrito} />
-      <Tab.Screen name="Categorías" component={HomeStack} />
-      <Tab.Screen name="Mi Cuenta">
-        {props => <MyAccountStack {...props} onSignOut={onSignOut} />}
-      </Tab.Screen>
-    </Tab.Navigator>
-  );
-}
-
+// Estado Global para el Carrito y Función de Manejo
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [cart, setCart] = useState([]); // 
 
   const handleSignIn = () => {
     setIsSignedIn(true);
@@ -100,16 +44,98 @@ function App() {
     setIsRegistering(false);
   };
 
+  const addToCart = (product) => {
+    setCart((prevCart) => {
+      const existingProduct = prevCart.find((item) => item.id === product.id);
+      if (existingProduct) {
+        // Incrementa la cantidad si ya existe
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        // Agrega un nuevo producto con cantidad inicial de 1
+        return [...prevCart, { ...product, quantity: 1 }];
+      }
+    });
+  };
+
+
+  function HomeStack() {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Home Tab" component={HomeScreen} />
+        <Stack.Screen name="Catálogo">
+          {(props) => <Catalogo {...props} addToCart={addToCart} />}
+        </Stack.Screen>
+        <Stack.Screen name="Category" component={Category} />
+        <Stack.Screen name="ProductCard" component={ProductCard} />
+        <Stack.Screen name="NecklaceCustomization" component={NecklaceCustomization} />
+        <Stack.Screen name="StrapCustomization" component={StrapCustomization} />
+        <Stack.Screen name="StrapCustomizationTheme" component={StrapCustomizationTheme} />
+        <Stack.Screen name="StrapCustomizationRandom" component={StrapCustomizationRandom} />
+      </Stack.Navigator>
+    );
+  }
+
+  function MyAccountStack({ onSignOut }) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Mi Cuenta Tab">
+          {props => <MyAccount {...props} onSignOut={onSignOut} />}
+        </Stack.Screen>
+        <Stack.Screen name="Editar Mi Cuenta" component={EditMyAccount} />
+        <Stack.Screen name="Términos y Condiciones" component={TermsAndConditions} />
+        <Stack.Screen name="Iniciar sesión" component={LoginPage} />
+      </Stack.Navigator>
+    );
+  }
+
+  function MainTabs({ onSignOut }) {
+    return (
+      <Tab.Navigator
+        initialRouteName="Categorías"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Categorías') {
+              iconName = focused ? 'reorder-three' : 'reorder-three-outline';
+            } else if (route.name === 'Carrito') {
+              iconName = focused ? 'cart' : 'cart-outline';
+            } else if (route.name === 'Mi Cuenta') {
+              iconName = focused ? 'person-circle' : 'person-circle-outline';
+            }
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'gray',
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="Carrito">
+          {(props) => <Carrito {...props} cart={cart} />}
+        </Tab.Screen>
+        <Tab.Screen name="Categorías" component={HomeStack} />
+        <Tab.Screen name="Mi Cuenta">
+          {(props) => <MyAccountStack {...props} onSignOut={onSignOut} />}
+        </Tab.Screen>
+      </Tab.Navigator>
+    );
+  }
+
   return (
     <NavigationContainer>
       {isSignedIn ? (
         <MainTabs onSignOut={handleSignOut} />
+      ) : isRegistering ? (
+        <RegisterPage
+          onRegister={handleRegistrationComplete}
+          onBack={handleRegistrationComplete}
+        />
       ) : (
-        isRegistering ? (
-          <RegisterPage onRegister={handleRegistrationComplete} onBack={handleRegistrationComplete} />
-        ) : (
-          <LoginPage onSignIn={handleSignIn} onRegister={handleRegisterNavigation} />
-        )
+        <LoginPage onSignIn={handleSignIn} onRegister={handleRegisterNavigation} />
       )}
     </NavigationContainer>
   );
