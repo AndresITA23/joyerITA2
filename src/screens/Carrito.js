@@ -1,30 +1,22 @@
-import 'react-native-gesture-handler';
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 
-function Carrito({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.boldText}>Carrito</Text>
-      <Text> </Text>
-      <Button 
-      onPress={() => navigation.navigate('Home')}
-      title="Go to Home"
-      />
-    </View>
-  );
+
+const { width, height } = Dimensions.get('window');
+
+function Carrito() {
+  return <Center>
+      <Container>
+        <Heading>
+          A component library for the
+          <Text color="emerald.500"> React Ecosystem</Text>
+        </Heading>
+        <Text mt="3" fontWeight="medium">
+          NativeBase is a simple, modular and accessible component library that
+          gives you building blocks to build you React applications.
+        </Text>
+      </Container>
+    </Center>;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  boldText: {
-    fontSize: 24, // Tamaño de la fuente
-    fontWeight: 'bold', // Negritas
-  },
-});
 
 export default Carrito;
