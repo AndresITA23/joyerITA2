@@ -61,7 +61,7 @@ function App() {
     });
   };
 
-  // Estructura de Navegación
+
   function HomeStack() {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
