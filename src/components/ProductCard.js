@@ -7,15 +7,25 @@ function ProductCard({ route }) {
   const { product, categoryTitle } = route.params; 
 
   const handleCustomize = () => {
-    switch (product.type) { 
-      case 'necklace':
-        navigation.navigate('NecklaceCustomization');
+    switch (categoryTitle) { 
+      case 'Collares':
+        navigation.navigate('NecklaceCustomization', {
+          product: product,
+          categoryTitle: categoryTitle
+          
+        }, console.log(product.imageName));
         break;
-      case 'bracelet':
-        navigation.navigate('BraceletCustomization');
+      case 'Pulseras':
+        navigation.navigate('BraceletCustomization', {
+          product: product,
+          categoryTitle: categoryTitle
+        });
         break;
-      case 'strap':
-        navigation.navigate('StrapCustomization');
+      case 'Straps':
+        navigation.navigate('StrapCustomization', {
+          product: product,
+          categoryTitle: categoryTitle
+        });
         break;
       default:
         console.warn('Tipo de producto no reconocido');
@@ -32,7 +42,7 @@ function ProductCard({ route }) {
         <Text style={styles.categoryTitle}>{categoryTitle}</Text>
       </View>
 
-      <Image source={product.image} style={styles.productImage} />
+      <Image source={product.imageSrc} style={styles.productImage} />
       <Text style={styles.productName}>{product.name}</Text>
       <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
       <Text style={styles.productDescription}>{product.description}</Text>
@@ -40,9 +50,7 @@ function ProductCard({ route }) {
         <TouchableOpacity style={styles.customizeButton} onPress={handleCustomize}>
           <Text style={styles.customizeButtonText}>Personalizar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addToCartButton}>
-            <Text style={styles.addToCartButtonText}>Agregar al carrito</Text>
-        </TouchableOpacity>
+
       </View>
     </View>
   );

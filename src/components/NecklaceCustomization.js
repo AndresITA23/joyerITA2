@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { addDoc, collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../../utils/firebase.js';
 import { useNavigation } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth';
+import Toast from 'react-native-toast-message';
 
-function NecklaceCustomization() {
+function NecklaceCustomization({ route, addToCart }) {
   const navigation = useNavigation();
+  const { product, categoryTitle } = route.params;
 
   const [baseColor, setBaseColor] = useState(null);
   const [size, setSize] = useState(null);
@@ -14,6 +19,71 @@ function NecklaceCustomization() {
   const claspColors = ['Dorado', 'Plateado'];
   const sizes = ['30 cm', '35 cm', '40 cm'];
 
+  const handleSave = async () => {
+    if (!baseColor || !size || !objectColor || !claspColor) {
+      alert('Por favor, selecciona todas las opciones antes de continuar.');
+      return;
+    }
+  
+    const customizedProduct = {
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      imageName: product.imageName,
+      baseColor,
+      size,
+      objectColor,
+      claspColor,
+    };
+  
+    try {
+
+      const docRef = await addDoc(collection(db, 'personalizedProducts'), customizedProduct);
+      console.log('Document written with ID: ', docRef.id);
+
+      const userId = getAuth().currentUser?.uid;
+  
+      if (!userId) {
+        alert('Debes estar autenticado para agregar productos al carrito.');
+        return;
+      }
+  
+
+      const q = query(collection(db, 'carritos'), where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+
+        const carritoDoc = querySnapshot.docs[0]; 
+        const carritoRef = doc(db, 'carritos', carritoDoc.id);
+  
+        
+        await updateDoc(carritoRef, {
+          products: [...carritoDoc.data().products, { productId: docRef.id, quantity: 1 }],
+        });
+      } else {
+
+        await addDoc(collection(db, 'carritos'), {
+          userId: userId,
+          products: [{ productId: docRef.id, quantity: 1 }],
+        });
+      }
+      Toast.show({
+        type: 'success',
+        position: 'top',
+        text1: 'Producto agregado al carrito',
+      });
+      navigation.navigate('Carrito');
+    } catch (e) {
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Error al agregar el producto al carrito',
+      });
+      console.error('Error adding document: ', e);
+    }
+  };
+
   const renderRadioButtons = (options, selected, setSelected) => {
     return options.map((option, index) => (
       <TouchableOpacity
@@ -22,30 +92,11 @@ function NecklaceCustomization() {
         onPress={() => setSelected(option)}
       >
         <View
-          style={[
-            styles.radioCircle,
-            selected === option && styles.radioCircleSelected,
-          ]}
+          style={[styles.radioCircle, selected === option && styles.radioCircleSelected]}
         />
         <Text style={styles.radioText}>{option}</Text>
       </TouchableOpacity>
     ));
-  };
-
-  const handleFinish = () => {
-    if (!baseColor || !size || !objectColor || !claspColor) {
-      alert('Por favor, selecciona todas las opciones antes de continuar.');
-      return;
-    }
-
-    navigation.navigate('Cart', {
-      product: {
-        baseColor,
-        size,
-        objectColor,
-        claspColor,
-      },
-    });
   };
 
   return (
@@ -55,7 +106,7 @@ function NecklaceCustomization() {
           source={require('../../assets/images/logo-removebg.png')}
           style={styles.logo}
         />
-        <Text style={styles.categoryTitle}>Personalizar Collar</Text>
+        <Text style={styles.categoryTitle}>Personalizar {product.name}</Text>
       </View>
 
       <View style={styles.section}>
@@ -78,7 +129,7 @@ function NecklaceCustomization() {
         {renderRadioButtons(claspColors, claspColor, setClaspColor)}
       </View>
 
-      <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>
+      <TouchableOpacity style={styles.finishButton} onPress={handleSave}>
         <Text style={styles.finishButtonText}>Terminar</Text>
       </TouchableOpacity>
     </ScrollView>

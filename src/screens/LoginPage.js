@@ -1,24 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../utils/firebase.js';
+import Toast from 'react-native-toast-message';
+
 
 function LoginPage({ onSignIn, onRegister }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Error',
+        text2: 'Por favor ingresa correo y contraseña',
+      });
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Usuario autenticado:', userCredential.user);
+
+      Toast.show({
+        type: 'success',
+        position: 'top',
+        text1: 'Inicio de sesión exitoso',
+        text2: '¡Bienvenido de nuevo!',
+      });
+
+      onSignIn();
+
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error.message);
+
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Error al iniciar sesión',
+        text2: 'Correo o contraseña incorrectos',
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
+
       <View style={styles.circle} />
       <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       <Text style={styles.loginText}>Iniciar sesión</Text>
       
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Correo electrónico</Text>
-        <TextInput style={styles.inputUnderline} placeholder="email" />
+        <TextInput
+          style={styles.inputUnderline}
+          placeholder="email"
+          value={email}
+          onChangeText={setEmail}
+        />
       </View>
       
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Contraseña</Text>
-        <TextInput style={styles.inputUnderline} placeholder="contraseña" secureTextEntry />
+        <TextInput
+          style={styles.inputUnderline}
+          placeholder="contraseña"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
       </View>
       
-      <TouchableOpacity style={styles.button} onPress={onSignIn}>
+      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text style={styles.buttonText}>Iniciar sesión</Text>
       </TouchableOpacity>
       
@@ -33,10 +89,11 @@ function LoginPage({ onSignIn, onRegister }) {
         </TouchableOpacity>
         .
       </Text>
+
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

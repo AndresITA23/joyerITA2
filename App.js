@@ -18,15 +18,15 @@ import BraceletCustomization from "./src/components/BraceletCustomization";
 import StrapCustomization from "./src/components/StrapCustomization";
 import StrapCustomizationTheme from "./src/components/StrapCustomizationTheme";
 import StrapCustomizationRandom from "./src/components/StrapCustomizationRandom";
+import Toast from "react-native-toast-message";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Estado Global para el Carrito y Función de Manejo
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [cart, setCart] = useState([]); // 
+  const [cart, setCart] = useState([]);
 
   const handleSignIn = () => {
     setIsSignedIn(true);
@@ -44,34 +44,16 @@ function App() {
     setIsRegistering(false);
   };
 
-  const addToCart = (product) => {
-    setCart((prevCart) => {
-      const existingProduct = prevCart.find((item) => item.id === product.id);
-      if (existingProduct) {
-        // Incrementa la cantidad si ya existe
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        // Agrega un nuevo producto con cantidad inicial de 1
-        return [...prevCart, { ...product, quantity: 1 }];
-      }
-    });
-  };
-
 
   function HomeStack() {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home Tab" component={HomeScreen} />
-        <Stack.Screen name="Catálogo">
-          {(props) => <Catalogo {...props} addToCart={addToCart} />}
-        </Stack.Screen>
+        <Stack.Screen name="Catalogo" component={Catalogo} />
         <Stack.Screen name="Category" component={Category} />
         <Stack.Screen name="ProductCard" component={ProductCard} />
         <Stack.Screen name="NecklaceCustomization" component={NecklaceCustomization} />
+        <Stack.Screen name="BraceletCustomization" component={BraceletCustomization} />
         <Stack.Screen name="StrapCustomization" component={StrapCustomization} />
         <Stack.Screen name="StrapCustomizationTheme" component={StrapCustomizationTheme} />
         <Stack.Screen name="StrapCustomizationRandom" component={StrapCustomizationRandom} />
@@ -137,6 +119,7 @@ function App() {
       ) : (
         <LoginPage onSignIn={handleSignIn} onRegister={handleRegisterNavigation} />
       )}
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </NavigationContainer>
   );
 }

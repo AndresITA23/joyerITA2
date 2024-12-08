@@ -1,20 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity } from 'react-native';
-
-const productsByCategory = {
-  Collares: [
-    { id: '1', name: 'Collar Abejitas', price: 199.99, description: 'Hermoso collar con abejitas de colores.', image: require('../../assets/images/collar_abejitas.png'), type: 'necklace' },
-    { id: '2', name: 'Collar Caritas Felices', price: 149.99, description: 'Un collar lleno de caritas felices.', image: require('../../assets/images/collar_caras_felices.png'), type: 'necklace' },
-    { id: '3', name: 'Collar Cerezas', price: 129.99, description: 'Collar con colgantes de cerezas.', image: require('../../assets/images/collar_cerezas.png'), type: 'necklace' },
-  ],
-  Pulseras: [
-    { id: '4', name: 'Pulsera Moras', price: 99.99, description: 'Pulsera inspirada en las moras.', image: require('../../assets/images/pulsera_moras.png'), type: 'bracelet' },
-    { id: '5', name: 'Pulseras Tejidas', price: 89.99, description: 'Pulseras tejidas a mano.', image: require('../../assets/images/pulseras_tejidas.png'), type: 'bracelet' },
-  ],
-  Straps: [
-    { id: '6', name: 'Strap Multicolor', price: 59.99, description: 'Strap colorido para tu dispositivo.', image: require('../../assets/images/strap.png'), type: 'strap' },
-  ],
-};
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../utils/firebase'; 
+import images from '../../utils/imageMap'; 
 
 const ProductCard = ({ product, onPress }) => (
   <TouchableOpacity style={styles.productCard} onPress={onPress}>
@@ -22,31 +10,77 @@ const ProductCard = ({ product, onPress }) => (
       <Text style={styles.productName}>{product.name}</Text>
       <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
     </View>
-    <Image source={product.image} style={styles.productImage} />
+    <Image source={product.imageSrc} style={styles.productImage} />
   </TouchableOpacity>
 );
 
 function Category({ route, navigation }) {
-  const { categoryTitle } = route.params; 
-  const products = productsByCategory[categoryTitle] || []; 
+  const { categoryTitle } = route.params;
+  const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const productsCollection = collection(db, categoryTitle.toLowerCase());
+        const productsSnapshot = await getDocs(productsCollection);
+        const productsList = productsSnapshot.docs.map(doc => {
+          const data = doc.data();
+          const imageSrc = getImageSource(data.imageName); 
+          return { id: doc.id, ...data, imageSrc };
+        });
+        setProducts(productsList);
+      } catch (error) {
+        console.error("Error al obtener productos: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, [categoryTitle]);
+
+  const getImageSource = (imageName) => {
+    if (typeof imageName === 'string') {
+      return images[imageName] || require('../../assets/images/default.png'); 
+    } else {
+      console.error('imageName no es un string:', imageName);
+      return require('../../assets/images/default.png');
+    }
+  };
+
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    if (text === '') {
+      setProducts(products);
+    } else {
+      const filtered = products.filter((item) =>
+        item.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setProducts(filtered);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
-      <TextInput style={styles.searchBar} placeholder={`Buscar en ${categoryTitle}`} />
+      <TextInput
+        style={styles.searchBar}
+        placeholder={`Buscar en ${categoryTitle}`}
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
       <Text style={styles.sectionTitle}>{categoryTitle}</Text>
 
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ProductCard 
-            product={item} 
-            onPress={() => navigation.navigate('ProductCard', { 
-              product: item, 
-              categoryTitle 
-            })} 
+          <ProductCard
+            product={item}
+            onPress={() => navigation.navigate('ProductCard', {
+              product: item,
+              categoryTitle
+            })}
           />
-
         )}
         contentContainerStyle={styles.productList}
       />

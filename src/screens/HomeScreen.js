@@ -52,7 +52,7 @@ function HomeScreen({ navigation }) {
           </View> 
         ))}
       </View>
-      <TouchableOpacity style={styles.catalogButton} onPress={() => navigation.navigate('Catálogo')}>
+      <TouchableOpacity style={styles.catalogButton} onPress={() => navigation.navigate('Catalogo')}>
         <Text style={styles.catalogButtonText}>Ver catálogo</Text>
       </TouchableOpacity>
     </View>

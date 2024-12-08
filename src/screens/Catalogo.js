@@ -1,37 +1,42 @@
-
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
-
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../utils/firebase.js';
+import images from '../../utils/imageMap';
 
 const { width, height } = Dimensions.get('window');
 
-const data = [
-  { id: '1', title: 'Collar de cerezas', price: '$120.00', description: 'Un hermoso collar con diseño de cerezas.', image: require('../../assets/images/collar_cerezas.png') },
-  { id: '2', title: 'Pulsera de corazones', price: '$80.00', description: 'Pulsera con pequeños corazones colgantes.', image: require('../../assets/images/pulsera_1.png') },
-  { id: '3', title: 'Strap de corazón', price: '$50.00', description: 'Strap de corazón para tu teléfono móvil.', image: require('../../assets/images/strap_1.png') },
-  { id: '4', title: 'Collar de corazón', price: '$140.00', description: 'Collar con un colgante en forma de corazón.', image: require('../../assets/images/collar_1.png') },
-  { id: '5', title: 'Collar de flores blancas', price: '$120.00', description: 'Un hermoso collar con diseño de flores.', image: require('../../assets/images/collar_flores_blancas.png') },
-  { id: '6', title: 'Pulsera moras', price: '$80.00', description: 'Pulsera con pequeños flores colgantes.', image: require('../../assets/images/pulsera_moras.png') },
-  { id: '7', title: 'Strap de corazones', price: '$50.00', description: 'Strap de corazones para tu teléfono móvil.', image: require('../../assets/images/strap_corazones.png') },
-  { id: '8', title: 'Collar de flores moradas', price: '$140.00', description: 'Collar con un colgante en forma de flores.', image: require('../../assets/images/collar_flores_moradas.png') },
-  { id: '9', title: 'Collar de abejitass', price: '$120.00', description: 'Un hermoso collar con diseño de flores.', image: require('../../assets/images/collar_abejitas.png') },
-  { id: '10', title: 'Pulseras corazon', price: '$80.00', description: 'Pulsera con pequeño corazon.', image: require('../../assets/images/pulseras_corazon.png') },
-  { id: '11', title: 'Collar de caras felices', price: '$140.00', description: 'Collar con un colgante con caritas.', image: require('../../assets/images/collar_caras_felices.png') },
-  { id: '12', title: 'Collar de cerezas', price: '$120.00', description: 'Un hermoso collar con un diseño de una cerezas.', image: require('../../assets/images/collar_cereza.png') },
-  { id: '13', title: 'Pulseras corazon rojo', price: '$80.00', description: 'Pulsera con pequeño corazon en color rojo.', image: require('../../assets/images/pulseras_corazon_rojo.png') },
-  { id: '14', title: 'Pulseras nombres', price: '$80.00', description: 'Pulsera con nombres grabados.', image: require('../../assets/images/pulseras_nombre.png') },
-  { id: '15', title: 'Pulseras tejidas', price: '$80.00', description: 'Pulsera tejidas de manera artesanal', image: require('../../assets/images/pulseras_tejidas.png') },
-  { id: '16', title: 'Strap de carita feliz', price: '$50.00', description: 'Strap de carita feliz para tu teléfono móvil.', image: require('../../assets/images/strap.png') },
-  { id: '17', title: 'Strap de ojo turco', price: '$50.00', description: 'Strap de ojo turco para tu teléfono móvil.', image: require('../../assets/images/strap_ojo_turco.png') },
+const collections = ['Collares', 'Pulseras', 'Straps'];
 
-];
-
-
-
-function Catalogo({ addToCart }) {
+function Catalogo({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState([]);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const productsList = [];
+        for (const collectionName of collections) {
+          const productsCollection = collection(db, collectionName.toLowerCase());
+          const productsSnapshot = await getDocs(productsCollection);
+          const collectionProducts = productsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            collection: collectionName,
+            imageSrc: images[doc.data().imageName] || images['default.png'],
+          }));
+          productsList.push(...collectionProducts);
+        }
+        setData(productsList);
+        setFilteredData(productsList);
+      } catch (error) {
+        console.error("Error al obtener productos: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -39,7 +44,7 @@ function Catalogo({ addToCart }) {
       setFilteredData(data);
     } else {
       const filtered = data.filter((item) =>
-        item.title.toLowerCase().includes(text.toLowerCase())
+        item.name.toLowerCase().includes(text.toLowerCase())
       );
       setFilteredData(filtered);
     }
@@ -61,18 +66,15 @@ function Catalogo({ addToCart }) {
         data={filteredData}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <Image source={item.image} style={styles.itemImage} />
-            <Text style={styles.itemTitle}>{item.title}</Text>
+            <Image source={item.imageSrc} style={styles.itemImage} />
+            <Text style={styles.itemTitle}>{item.name}</Text>
             <Text style={styles.itemPrice}>{item.price}</Text>
             <Text style={styles.itemDescription}>{item.description}</Text>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Personalizar</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => addToCart(item)} 
+              onPress={() => navigation.navigate('ProductCard', { product: item, categoryTitle: item.collection })}
             >
-              <Text style={styles.buttonText}>Agregar al carrito</Text>
+              <Text style={styles.buttonText}>Personalizar</Text>
             </TouchableOpacity>
           </View>
         )}
