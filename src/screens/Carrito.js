@@ -4,7 +4,7 @@ import { getDocs, query, collection, where, doc, getDoc, updateDoc, arrayRemove,
 import { db } from '../../utils/firebase.js';
 import { getAuth } from 'firebase/auth';
 import images from '../../utils/imageMap.js';
-import Icon from 'react-native-vector-icons/MaterialIcons';  // Importar el ícono
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 function Carrito() {
   const [cartItems, setCartItems] = useState([]);
@@ -40,9 +40,10 @@ function Carrito() {
         } else {
           setCartItems([]);
         }
+        setLoading(false);
       });
 
-      return () => unsubscribe();  // Limpiar el listener cuando el componente se desmonte
+      return () => unsubscribe();
     };
 
     fetchCartItems();
@@ -63,9 +64,11 @@ function Carrito() {
         const carritoDoc = querySnapshot.docs[0];
         const carritoRef = doc(db, 'carritos', carritoDoc.id);
 
-        // Eliminar el producto del carrito en Firebase
+        // Actualizar la cantidad del producto en lugar de eliminar directamente
+        const updatedProducts = carritoDoc.data().products.filter(item => item.productId !== productId);
+        
         await updateDoc(carritoRef, {
-          products: arrayRemove({ productId: productId, quantity: 1 })
+          products: updatedProducts,
         });
 
         // Actualizar el estado localmente
@@ -103,7 +106,7 @@ function Carrito() {
               <Text style={styles.productQuantity}>Cantidad: {item.quantity}</Text>
             </View>
             <TouchableOpacity style={styles.removeButton} onPress={() => handleRemove(item.productId)}>
-              <Icon name="delete" size={24} color="#FFF" />  {/* Icono de eliminar */}
+              <Icon name="delete" size={24} color="#FFF" />
             </TouchableOpacity>
           </View>
         ))
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     backgroundColor: '#FF6347',
     padding: 15,
-    borderRadius: 50, 
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },

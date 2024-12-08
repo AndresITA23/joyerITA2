@@ -78,10 +78,6 @@ function LoginPage({ onSignIn, onRegister }) {
         <Text style={styles.buttonText}>Iniciar sesión</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={styles.buttonGoogle}>
-        <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
-      </TouchableOpacity>
-    
       <Text style={styles.registerText}>
         ¿Aún no tienes cuenta? 
         <TouchableOpacity onPress={onRegister}>

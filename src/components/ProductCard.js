@@ -22,7 +22,7 @@ function ProductCard({ route }) {
         });
         break;
       case 'Straps':
-        navigation.navigate('StrapCustomization', {
+        navigation.navigate('StrapCustomizationRandom', {
           product: product,
           categoryTitle: categoryTitle
         });
