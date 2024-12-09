@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     footer: {
-        marginTop: 20,
+        marginTop: 10,
         alignItems: "center",
         marginBottom: 20,
     },

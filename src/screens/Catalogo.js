@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Image, FlatList, TouchableOpacity, D
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../utils/firebase.js';
 import images from '../../utils/imageMap';
+import { ScrollView } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,7 +52,7 @@ function Catalogo({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Image
         source={require('../../assets/images/logo-removebg.png')}
         style={styles.logo}
@@ -62,26 +63,26 @@ function Catalogo({ navigation }) {
         value={searchQuery}
         onChangeText={handleSearch}
       />
-      <FlatList
-        data={filteredData}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Image source={item.imageSrc} style={styles.itemImage} />
-            <Text style={styles.itemTitle}>{item.name}</Text>
-            <Text style={styles.itemPrice}>{item.price}</Text>
-            <Text style={styles.itemDescription}>{item.description}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigation.navigate('ProductCard', { product: item, categoryTitle: item.collection })}
-            >
-              <Text style={styles.buttonText}>Personalizar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
-    </View>
+        <FlatList
+          data={filteredData}
+          renderItem={({ item }) => (
+            <View style={styles.itemContainer}>
+              <Image source={item.imageSrc} style={styles.itemImage} />
+              <Text style={styles.itemTitle}>{item.name}</Text>
+              <Text style={styles.itemPrice}>{item.price}</Text>
+              <Text style={styles.itemDescription}>{item.description}</Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate('ProductCard', { product: item, categoryTitle: item.collection })}
+              >
+                <Text style={styles.buttonText}>Personalizar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+        />
+    </ScrollView>
   );
 }
 
