@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { getDocs, query, collection, where, doc, getDoc, updateDoc, arrayRemove, onSnapshot } from 'firebase/firestore';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { getDocs, query, collection, where, doc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../utils/firebase.js';
 import { getAuth } from 'firebase/auth';
 import images from '../../utils/imageMap.js';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useStripe } from '@stripe/stripe-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 function Carrito() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const stripe = useStripe();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchCartItems = () => {
@@ -31,7 +35,6 @@ function Carrito() {
 
               const productData = productSnap.data();
               const imageName = productData?.imageName;
-
               return { ...productData, quantity: product.quantity, productId: product.productId, imageName };
             })
           );
@@ -49,6 +52,14 @@ function Carrito() {
     fetchCartItems();
   }, []);
 
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const HandleNavigate = () => {
+    navigation.navigate('Checkout');
+  };
+
   const handleRemove = async (productId) => {
     const userId = getAuth().currentUser?.uid;
     if (!userId) {
@@ -64,14 +75,12 @@ function Carrito() {
         const carritoDoc = querySnapshot.docs[0];
         const carritoRef = doc(db, 'carritos', carritoDoc.id);
 
-        // Actualizar la cantidad del producto en lugar de eliminar directamente
         const updatedProducts = carritoDoc.data().products.filter(item => item.productId !== productId);
-        
+
         await updateDoc(carritoRef, {
           products: updatedProducts,
         });
 
-        // Actualizar el estado localmente
         setCartItems(cartItems.filter(item => item.productId !== productId));
       }
     } catch (e) {
@@ -88,30 +97,41 @@ function Carrito() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {cartItems.length === 0 ? (
-        <View style={styles.center}>
-          <Text>No hay productos en tu carrito.</Text>
-        </View>
-      ) : (
-        cartItems.map((item, index) => (
-          <View key={index} style={styles.productContainer}>
-            <Image
-              source={images[item.imageName] || images['default.png']}
-              style={styles.productImage}
-            />
-            <View style={styles.productDetails}>
-              <Text style={styles.productName}>{item.name}</Text>
-              <Text style={styles.productPrice}>${item.price}</Text>
-              <Text style={styles.productQuantity}>Cantidad: {item.quantity}</Text>
-            </View>
-            <TouchableOpacity style={styles.removeButton} onPress={() => handleRemove(item.productId)}>
-              <Icon name="delete" size={24} color="#FFF" />
-            </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}> Resumen de productos</Text>
+      </View>
+      <ScrollView>
+        {cartItems.length === 0 ? (
+          <View style={styles.center}>
+            <Text>No hay productos en tu carrito.</Text>
           </View>
-        ))
-      )}
-    </ScrollView>
+        ) : (
+          cartItems.map((item, index) => (
+            <View key={index} style={styles.productContainer}>
+              <Image
+                source={images[item.imageName] || images['default.png']}
+                style={styles.productImage}
+              />
+              <View style={styles.productDetails}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productPrice}>${item.price}</Text>
+                <Text style={styles.productQuantity}>Cantidad: {item.quantity}</Text>
+              </View>
+              <TouchableOpacity style={styles.removeButton} onPress={() => handleRemove(item.productId)}>
+                <Icon name="delete" size={24} color="#FFF" />
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
+        <View style={styles.footer}>
+          <Text style={styles.totalPrice}>Total: ${calculateTotalPrice()}</Text>
+          <TouchableOpacity style={styles.paymentButton} onPress={HandleNavigate}>
+            <Text style={styles.paymentButtonText}>Ir a Checkout</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -121,10 +141,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF8DC',
     paddingHorizontal: 20,
   },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
+  header: {
+    marginTop: 50,
+    marginVertical: 20,
     alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
   },
   productContainer: {
     flexDirection: 'row',
@@ -137,12 +162,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+    alignItems: 'center',
   },
   productImage: {
     width: 80,
     height: 80,
     marginRight: 15,
-    borderRadius: 8,
+    borderRadius: 10,
   },
   productDetails: {
     flex: 1,
@@ -151,24 +177,41 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
   },
   productPrice: {
     fontSize: 14,
-    color: '#DD6B17',
+    color: '#808080',
   },
   productQuantity: {
     fontSize: 14,
-    color: '#000',
+    color: '#808080',
   },
   removeButton: {
-    marginLeft: 10,
-    marginRight: 10,
+    padding: 10,
     backgroundColor: '#FF6347',
-    padding: 15,
     borderRadius: 50,
-    justifyContent: 'center',
+  },
+  footer: {
+    marginVertical: 20,
     alignItems: 'center',
+  },
+  totalPrice: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  paymentButton: {
+    marginTop: 10,
+    backgroundColor: '#DD6B17',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '100%',
+  },
+  paymentButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
