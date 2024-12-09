@@ -4,11 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyAccount({ navigation, onSignOut }) {
   const [isLandscape, setIsLandscape] = useState(false);
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('Nombre Completo');
+  const [address, setAddress] = useState('Dirección 1');
+  const [postalCode, setPostalCode] = useState('CP');
+  const [email, setEmail] = useState('email@predeterminado.com');
+  const [username, setUsername] = useState('User1');
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const updateOrientation = () => {
@@ -29,11 +30,13 @@ function MyAccount({ navigation, onSignOut }) {
       const storedPostalCode = await AsyncStorage.getItem('postalCode');
       const storedEmail = await AsyncStorage.getItem('email');
       const storedUsername = await AsyncStorage.getItem('username');
+      const storedProfileImage = await AsyncStorage.getItem('profileImage');
       if (storedName) setName(storedName);
       if (storedAddress) setAddress(storedAddress);
       if (storedPostalCode) setPostalCode(storedPostalCode);
       if (storedEmail) setEmail(storedEmail);
       if (storedUsername) setUsername(storedUsername);
+      if (storedProfileImage) setProfileImage(storedProfileImage);
     } catch (error) {
       console.error('Error loading user data:', error);
     }
@@ -67,7 +70,11 @@ function MyAccount({ navigation, onSignOut }) {
         <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       </View>
       <ScrollView contentContainerStyle={isLandscape ? styles.contentLandscape : styles.content}>
-        <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
+        {profileImage ? (
+          <Image source={{ uri: profileImage }} style={styles.profileImage} />
+        ) : (
+          <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
+        )}
         <View style={isLandscape ? styles.profileContainerLandscape : styles.profileContainer}>
           <Text style={styles.label}>CORREO ELECTRÓNICO:</Text>
           <Text style={styles.email}>{email}</Text>
