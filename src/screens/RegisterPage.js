@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from "@react-navigation/native"
 import { auth } from '../../utils/firebase.js';
 import Toast from 'react-native-toast-message';
@@ -27,6 +28,9 @@ function RegisterPage({ onRegister, onBack }) {
       // Create user
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Usuario registrado:', userCredential.user);
+
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('username', username);
       
       Toast.show({
         type: 'success',

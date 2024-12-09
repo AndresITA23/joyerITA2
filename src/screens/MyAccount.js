@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyAccount({ navigation, onSignOut }) {
   const [isLandscape, setIsLandscape] = useState(false);
+  const [name, setName] = useState('Nombre Completo');
+  const [address, setAddress] = useState('Dirección 1');
+  const [postalCode, setPostalCode] = useState('CP');
+  const [email, setEmail] = useState('email@predeterminado.com');
+  const [username, setUsername] = useState('User1');
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const updateOrientation = () => {
@@ -16,12 +23,44 @@ function MyAccount({ navigation, onSignOut }) {
     };
   }, []);
 
-  const handleSignOut = () => {
-    onSignOut();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Iniciar sesión' }],
+  const loadUserData = async () => {
+    try {
+      const storedName = await AsyncStorage.getItem('name');
+      const storedAddress = await AsyncStorage.getItem('address');
+      const storedPostalCode = await AsyncStorage.getItem('postalCode');
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedUsername = await AsyncStorage.getItem('username');
+      const storedProfileImage = await AsyncStorage.getItem('profileImage');
+      if (storedName) setName(storedName);
+      if (storedAddress) setAddress(storedAddress);
+      if (storedPostalCode) setPostalCode(storedPostalCode);
+      if (storedEmail) setEmail(storedEmail);
+      if (storedUsername) setUsername(storedUsername);
+      if (storedProfileImage) setProfileImage(storedProfileImage);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadUserData();
     });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleSignOut = async () => {
+    try {
+      await AsyncStorage.clear();
+      onSignOut();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Iniciar sesión' }],
+      });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   };
 
   return (
@@ -30,13 +69,23 @@ function MyAccount({ navigation, onSignOut }) {
         <Text style={styles.headerText}>Mi Cuenta</Text>
         <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       </View>
-      <View style={isLandscape ? styles.contentLandscape : styles.content}>
-        <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
+      <ScrollView contentContainerStyle={isLandscape ? styles.contentLandscape : styles.content}>
+        {profileImage ? (
+          <Image source={{ uri: profileImage }} style={styles.profileImage} />
+        ) : (
+          <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
+        )}
         <View style={isLandscape ? styles.profileContainerLandscape : styles.profileContainer}>
+          <Text style={styles.label}>CORREO ELECTRÓNICO:</Text>
+          <Text style={styles.email}>{email}</Text>
+          <Text style={styles.label}>USUARIO:</Text>
+          <Text style={styles.username}>{username}</Text>
           <Text style={styles.label}>NOMBRE:</Text>
-          <Text style={styles.name}>VICTOR EDUARDO JUAREZ</Text>
+          <Text style={styles.name}>{name}</Text>
           <Text style={styles.label}>DOMICILIO:</Text>
-          <Text style={styles.address}>CALLE EDUARDO SI HAY #762, FARCC. SOVERANA CONVENCIÓN, AGUASCALIENTES, AGUASCALIENTES CP. 20126</Text>
+          <Text style={styles.address}>{address}</Text>
+          <Text style={styles.label}>CÓDIGO POSTAL:</Text>
+          <Text style={styles.postalCode}>{postalCode}</Text>
         </View>
         <View style={isLandscape ? styles.buttonContainerLandscape : styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Editar Mi Cuenta')}>
@@ -49,7 +98,7 @@ function MyAccount({ navigation, onSignOut }) {
             <Text style={styles.buttonText}>Términos y condiciones</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -77,13 +126,11 @@ const styles = StyleSheet.create({
     height: 150,
   },
   content: {
-    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 10,
   },
   contentLandscape: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -109,6 +156,38 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 5,
+    textAlign: 'left',
+  },
+  name: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  address: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  postalCode: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  email: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  username: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
   },
   buttonContainer: {
     width: '100%',
