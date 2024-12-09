@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../../utils/firebase.js';
 import Toast from 'react-native-toast-message';
-
 
 function LoginPage({ onSignIn, onRegister }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigation = useNavigation();
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -24,6 +26,8 @@ function LoginPage({ onSignIn, onRegister }) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log('Usuario autenticado:', userCredential.user);
+
+      await AsyncStorage.setItem('email', email);
 
       Toast.show({
         type: 'success',
@@ -48,7 +52,6 @@ function LoginPage({ onSignIn, onRegister }) {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.circle} />
       <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       <Text style={styles.loginText}>Iniciar sesión</Text>
@@ -90,6 +93,7 @@ function LoginPage({ onSignIn, onRegister }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

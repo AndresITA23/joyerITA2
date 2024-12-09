@@ -1,15 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function EditMyAccount({ navigation }) {
-  const [name, setName] = useState('VICTOR EDUARDO JUAREZ');
-  const [address, setAddress] = useState('CALLE EDUARDO SI HAY #762, FARCC. SOVERANA CONVENCIÓN, AGUASCALIENTES, AGUASCALIENTES');
-  const [postalCode, setPostalCode] = useState('20126');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [infoUpdated, setInfoUpdated] = useState(false);
 
-  const handleUpdate = () => {
-    setInfoUpdated(true);
-    // Aquí puedes agregar la lógica para guardar los datos actualizados
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedName = await AsyncStorage.getItem('name');
+        const storedAddress = await AsyncStorage.getItem('address');
+        const storedPostalCode = await AsyncStorage.getItem('postalCode');
+        const storedEmail = await AsyncStorage.getItem('email');
+        const storedUsername = await AsyncStorage.getItem('username');
+        if (storedName) setName(storedName);
+        if (storedAddress) setAddress(storedAddress);
+        if (storedPostalCode) setPostalCode(storedPostalCode);
+        if (storedEmail) setEmail(storedEmail);
+        if (storedUsername) setUsername(storedUsername);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
+  const handleUpdate = async () => {
+    if (!name || !address || !postalCode || !email || !username) {
+      Alert.alert('Error', 'Por favor, completa todos los campos.');
+      return;
+    }
+
+    try {
+      await AsyncStorage.setItem('name', name);
+      await AsyncStorage.setItem('address', address);
+      await AsyncStorage.setItem('postalCode', postalCode);
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('username', username);
+      setInfoUpdated(true);
+      navigation.navigate('Mi Cuenta Tab', { updated: true }); // Navegar de regreso a "Mi Cuenta" con un parámetro
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    }
   };
 
   const handleCancel = () => {
@@ -24,6 +62,18 @@ function EditMyAccount({ navigation }) {
       </View>
       <View style={styles.content}>
         <View style={styles.profileContainer}>
+          <Text style={styles.label}>CORREO ELECTRÓNICO:</Text>
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Text style={styles.label}>USUARIO:</Text>
+          <TextInput
+            style={styles.input}
+            value={username}
+            onChangeText={setUsername}
+          />
           <Text style={styles.label}>NOMBRE:</Text>
           <TextInput
             style={styles.input}
@@ -92,12 +142,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 20,
   },
   profileContainer: {
     width: '90%',

@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyAccount({ navigation, onSignOut }) {
   const [isLandscape, setIsLandscape] = useState(false);
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     const updateOrientation = () => {
@@ -10,18 +16,50 @@ function MyAccount({ navigation, onSignOut }) {
       setIsLandscape(width > height);
     };
 
-    const subscription = Dimensions.addEventListener('change', updateOrientation);
+    Dimensions.addEventListener('change', updateOrientation);
+    updateOrientation(); // Para establecer la orientación inicial
+
     return () => {
-      subscription?.remove();
+      Dimensions.removeEventListener('change', updateOrientation);
     };
   }, []);
 
-  const handleSignOut = () => {
-    onSignOut();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Iniciar sesión' }],
+  const loadUserData = async () => {
+    try {
+      const storedName = await AsyncStorage.getItem('name');
+      const storedAddress = await AsyncStorage.getItem('address');
+      const storedPostalCode = await AsyncStorage.getItem('postalCode');
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedUsername = await AsyncStorage.getItem('username');
+      if (storedName) setName(storedName);
+      if (storedAddress) setAddress(storedAddress);
+      if (storedPostalCode) setPostalCode(storedPostalCode);
+      if (storedEmail) setEmail(storedEmail);
+      if (storedUsername) setUsername(storedUsername);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadUserData();
     });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleSignOut = async () => {
+    try {
+      await AsyncStorage.clear();
+      onSignOut();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Iniciar sesión' }],
+      });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   };
 
   return (
@@ -33,10 +71,16 @@ function MyAccount({ navigation, onSignOut }) {
       <View style={isLandscape ? styles.contentLandscape : styles.content}>
         <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
         <View style={isLandscape ? styles.profileContainerLandscape : styles.profileContainer}>
+          <Text style={styles.label}>CORREO ELECTRÓNICO:</Text>
+          <Text style={styles.email}>{email}</Text>
+          <Text style={styles.label}>USUARIO:</Text>
+          <Text style={styles.username}>{username}</Text>
           <Text style={styles.label}>NOMBRE:</Text>
-          <Text style={styles.name}>VICTOR EDUARDO JUAREZ</Text>
+          <Text style={styles.name}>{name}</Text>
           <Text style={styles.label}>DOMICILIO:</Text>
-          <Text style={styles.address}>CALLE EDUARDO SI HAY #762, FARCC. SOVERANA CONVENCIÓN, AGUASCALIENTES, AGUASCALIENTES CP. 20126</Text>
+          <Text style={styles.address}>{address}</Text>
+          <Text style={styles.label}>CÓDIGO POSTAL:</Text>
+          <Text style={styles.postalCode}>{postalCode}</Text>
         </View>
         <View style={isLandscape ? styles.buttonContainerLandscape : styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Editar Mi Cuenta')}>
@@ -109,6 +153,38 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 5,
+    textAlign: 'left',
+  },
+  name: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  address: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  postalCode: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  email: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
+  },
+  username: {
+    fontSize: 20,
+    color: '#000000',
+    marginBottom: 10,
   },
   buttonContainer: {
     width: '100%',
