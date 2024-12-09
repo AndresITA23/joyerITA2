@@ -19,11 +19,15 @@ import StrapCustomization from "./src/components/StrapCustomization";
 import StrapCustomizationTheme from "./src/components/StrapCustomizationTheme";
 import StrapCustomizationRandom from "./src/components/StrapCustomizationRandom";
 import Toast from "react-native-toast-message";
+import { StripeProvider } from '@stripe/stripe-react-native';
+import Checkout from "./src/screens/Chekout";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function App() {
+
+  
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [cart, setCart] = useState([]);
@@ -57,6 +61,7 @@ function App() {
         <Stack.Screen name="StrapCustomization" component={StrapCustomization} />
         <Stack.Screen name="StrapCustomizationTheme" component={StrapCustomizationTheme} />
         <Stack.Screen name="StrapCustomizationRandom" component={StrapCustomizationRandom} />
+        <Stack.Screen name="Checkout" component={Checkout} />
       </Stack.Navigator>
     );
   }
@@ -108,6 +113,7 @@ function App() {
   }
 
   return (
+    <StripeProvider publishableKey="pk_test_51PdBptRxKVbjqFD4ED9ZuR15Ikv1HlkNNch3ICKmUrSeZRymRjY0ZwDHYdC42DPWzbTvtJHTMFVEDEkWncizs7QD006uvMdJUe">
     <NavigationContainer>
       {isSignedIn ? (
         <MainTabs onSignOut={handleSignOut} />
@@ -121,6 +127,7 @@ function App() {
       )}
       <Toast ref={(ref) => Toast.setRef(ref)} />
     </NavigationContainer>
+    </StripeProvider>
   );
 }
 
