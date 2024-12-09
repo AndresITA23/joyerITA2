@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyAccount({ navigation, onSignOut }) {
@@ -16,11 +16,9 @@ function MyAccount({ navigation, onSignOut }) {
       setIsLandscape(width > height);
     };
 
-    Dimensions.addEventListener('change', updateOrientation);
-    updateOrientation(); // Para establecer la orientación inicial
-
+    const subscription = Dimensions.addEventListener('change', updateOrientation);
     return () => {
-      Dimensions.removeEventListener('change', updateOrientation);
+      subscription?.remove();
     };
   }, []);
 
@@ -68,7 +66,7 @@ function MyAccount({ navigation, onSignOut }) {
         <Text style={styles.headerText}>Mi Cuenta</Text>
         <Image source={require('../../assets/images/logo-removebg.png')} style={styles.logo} />
       </View>
-      <View style={isLandscape ? styles.contentLandscape : styles.content}>
+      <ScrollView contentContainerStyle={isLandscape ? styles.contentLandscape : styles.content}>
         <Image source={require('../../assets/images/profile.png')} style={styles.profileImage} />
         <View style={isLandscape ? styles.profileContainerLandscape : styles.profileContainer}>
           <Text style={styles.label}>CORREO ELECTRÓNICO:</Text>
@@ -93,7 +91,7 @@ function MyAccount({ navigation, onSignOut }) {
             <Text style={styles.buttonText}>Términos y condiciones</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -121,13 +119,11 @@ const styles = StyleSheet.create({
     height: 150,
   },
   content: {
-    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 10,
   },
   contentLandscape: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
